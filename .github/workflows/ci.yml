@@ -1,0 +1,30 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: dotnet build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      # Warnings are errors via Directory.Build.props. Per-service test jobs
+      # (Testcontainers) are added in Faz 1 as path-filtered workflows.
+      - run: dotnet build AkironCommerce.slnx --configuration Release
+
+  compose-validate:
+    name: compose config
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose -f deploy/compose/docker-compose.infra.yml config --quiet
