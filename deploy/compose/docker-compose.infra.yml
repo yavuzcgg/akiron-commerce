@@ -1,0 +1,113 @@
+# AkironCommerce — local infrastructure
+#
+#   docker compose -f deploy/compose/docker-compose.infra.yml up -d --wait
+#
+# Services run from the IDE against this stack (ADR-0015: no Aspire AppHost).
+# Every image is PINNED — "latest" once broke a previous project's setup.
+# OTLP endpoints: Jaeger on 4317/4318 (primary trace target),
+# Aspire dashboard on 4319 (alternate pane; UI on 18888).
+
+name: akiron-infra
+
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: akiron-postgres
+    environment:
+      POSTGRES_USER: akiron
+      POSTGRES_PASSWORD: akiron_dev # local only — real deployments use .env
+      POSTGRES_DB: akiron
+    ports:
+      - "5432:5432"
+    volumes:
+      - akiron-pg-data:/var/lib/postgresql/data
+      - ./init-databases.sql:/docker-entrypoint-initdb.d/10-init-databases.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U akiron -d akiron"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  redis:
+    image: redis:8-alpine
+    container_name: akiron-redis
+    # AOF on: the cart lives here and is the one Redis-authoritative store (ADR-0009)
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "256mb", "--maxmemory-policy", "noeviction"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - akiron-redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  rabbitmq:
+    image: rabbitmq:4.1-management-alpine
+    container_name: akiron-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: akiron
+      RABBITMQ_DEFAULT_PASS: akiron_dev # local only
+    ports:
+      - "5672:5672"   # AMQP
+      - "15672:15672" # management UI
+    volumes:
+      - akiron-rmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.5.2
+    container_name: akiron-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false # local dev only
+      - cluster.name=akiron-es
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m # heap capped everywhere (ADR-0008)
+    mem_limit: 1400m
+    ports:
+      - "9200:9200"
+    volumes:
+      - akiron-es-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+
+  jaeger:
+    image: jaegertracing/jaeger:2.20.0
+    container_name: akiron-jaeger
+    ports:
+      - "16686:16686" # UI
+      - "4317:4317"   # OTLP gRPC (primary trace target)
+      - "4318:4318"   # OTLP HTTP
+
+  aspire-dashboard:
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:9.5
+    container_name: akiron-aspire-dashboard
+    environment:
+      - DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS=true # local dev only
+    ports:
+      - "18888:18888" # UI
+      - "4319:18889"  # OTLP gRPC (alternate telemetry pane)
+
+  mailpit:
+    image: axllent/mailpit:v1.31
+    container_name: akiron-mailpit
+    ports:
+      - "1025:1025" # SMTP (Notification dev target)
+      - "8025:8025" # UI
+
+volumes:
+  akiron-pg-data:
+  akiron-redis-data:
+  akiron-rmq-data:
+  akiron-es-data:
