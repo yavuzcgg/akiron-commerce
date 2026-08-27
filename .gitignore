@@ -1,0 +1,53 @@
+# --- .NET ---
+bin/
+obj/
+out/
+artifacts/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+[Dd]ebug/
+[Rr]elease/
+TestResults/
+*.trx
+coverage*/
+*.coverage
+.vs/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json.example
+_ReSharper*/
+*.DotSettings.user
+.idea/
+*.snupkg
+*.nupkg
+
+# --- Node / Next.js ---
+node_modules/
+.next/
+next-env.d.ts
+.turbo/
+*.tsbuildinfo
+.pnpm-store/
+
+# --- Environment & secrets ---
+.env
+.env.*
+!.env.example
+appsettings.Development.json
+!appsettings.Development.example.json
+*.pfx
+*.key
+*.pem
+
+# --- OS / editor noise ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Logs & temp ---
+*.log
+logs/
+tmp/
+.cr/

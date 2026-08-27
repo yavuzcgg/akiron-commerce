@@ -1,0 +1,23 @@
+<Project>
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      LICENSE PINS — do NOT bump these without reading docs/adr/0005 (MassTransit)
+      and docs/adr/0006 (MediatR). Later majors moved to commercial licensing.
+    -->
+    <PackageVersion Include="MassTransit" Version="8.5.10" />
+    <PackageVersion Include="MassTransit.RabbitMQ" Version="8.5.10" />
+    <PackageVersion Include="MediatR" Version="12.5.0" />
+  </ItemGroup>
+
+  <!--
+    All other entries are added in the phase that first needs them.
+    No speculative dependencies — see AGENTS.md.
+  -->
+
+</Project>
