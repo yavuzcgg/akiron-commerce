@@ -6,6 +6,8 @@
 # Every image is PINNED — "latest" once broke a previous project's setup.
 # OTLP endpoints: Jaeger on 4317/4318 (primary trace target),
 # Aspire dashboard on 4319 (alternate pane; UI on 18888).
+# All host ports bind to 127.0.0.1 only — this stack must not be reachable from the LAN.
+# PostgreSQL is published on 5433 (not 5432) so it can run beside other local projects.
 
 name: akiron-infra
 
@@ -19,7 +21,8 @@ services:
       POSTGRES_PASSWORD: akiron_dev # local only — real deployments use .env
       POSTGRES_DB: akiron
     ports:
-      - "5432:5432"
+      # 5432 deliberately left free: a co-hosted project owns it. The app connects to 5433.
+      - "127.0.0.1:5433:5432"
     volumes:
       - akiron-pg-data:/var/lib/postgresql/data
       - ./init-databases.sql:/docker-entrypoint-initdb.d/10-init-databases.sql:ro
@@ -35,7 +38,7 @@ services:
     # AOF on: the cart lives here and is the one Redis-authoritative store (ADR-0009)
     command: ["redis-server", "--appendonly", "yes", "--maxmemory", "256mb", "--maxmemory-policy", "noeviction"]
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     volumes:
       - akiron-redis-data:/data
     healthcheck:
@@ -51,8 +54,8 @@ services:
       RABBITMQ_DEFAULT_USER: akiron
       RABBITMQ_DEFAULT_PASS: akiron_dev # local only
     ports:
-      - "5672:5672"   # AMQP
-      - "15672:15672" # management UI
+      - "127.0.0.1:5672:5672"   # AMQP
+      - "127.0.0.1:15672:15672" # management UI
     volumes:
       - akiron-rmq-data:/var/lib/rabbitmq
     healthcheck:
@@ -72,7 +75,7 @@ services:
       - ES_JAVA_OPTS=-Xms512m -Xmx512m # heap capped everywhere (ADR-0008)
     mem_limit: 1400m
     ports:
-      - "9200:9200"
+      - "127.0.0.1:9200:9200"
     volumes:
       - akiron-es-data:/usr/share/elasticsearch/data
     healthcheck:
@@ -86,9 +89,9 @@ services:
     image: jaegertracing/jaeger:2.20.0
     container_name: akiron-jaeger
     ports:
-      - "16686:16686" # UI
-      - "4317:4317"   # OTLP gRPC (primary trace target)
-      - "4318:4318"   # OTLP HTTP
+      - "127.0.0.1:16686:16686" # UI
+      - "127.0.0.1:4317:4317"   # OTLP gRPC (primary trace target)
+      - "127.0.0.1:4318:4318"   # OTLP HTTP
 
   aspire-dashboard:
     image: mcr.microsoft.com/dotnet/aspire-dashboard:9.5
@@ -96,15 +99,15 @@ services:
     environment:
       - DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS=true # local dev only
     ports:
-      - "18888:18888" # UI
-      - "4319:18889"  # OTLP gRPC (alternate telemetry pane)
+      - "127.0.0.1:18888:18888" # UI
+      - "127.0.0.1:4319:18889"  # OTLP gRPC (alternate telemetry pane)
 
   mailpit:
     image: axllent/mailpit:v1.31
     container_name: akiron-mailpit
     ports:
-      - "1025:1025" # SMTP (Notification dev target)
-      - "8025:8025" # UI
+      - "127.0.0.1:1025:1025" # SMTP (Notification dev target)
+      - "127.0.0.1:8025:8025" # UI
 
 volumes:
   akiron-pg-data:

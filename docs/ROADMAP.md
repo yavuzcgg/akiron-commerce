@@ -7,7 +7,7 @@ which is already a strong portfolio artifact on its own.
 
 ## Phases
 
-### Faz 0 — Bootstrap (Sep 2026, 1–2 wk) — IN PROGRESS
+### Faz 0 — Bootstrap (Aug 2026, done 2026-08-27) — COMPLETE
 
 - [x] `git init` + public GitHub repo + first push on day one
 - [x] Governance core: `AGENTS.md`, `CLAUDE.md`, `ARCHITECTURE.md`, `docs/` (SYSTEM_ARCHITECTURE, ROADMAP, DATA_OWNERSHIP), ADR batch, devlog, 2 skills
@@ -16,11 +16,13 @@ which is already a strong portfolio artifact on its own.
 - [x] CI green on the empty solution (build + compose validate)
 - [x] All infra containers healthy via `docker compose up`
 
-### Faz 1 — Catalog slice (→ mid-Oct 2026, 4–5 wk)
+### Faz 1 — Catalog slice (→ mid-Oct 2026, 4–5 wk) — IN PROGRESS
 
 Catalog end-to-end: domain (price groups + markup chain), EF Core + first
 migration, minimal-API endpoint modules, Testcontainers integration tests,
-Dockerfile, path-filtered CI, **OTel traces visible in Jaeger from this slice**.
+Dockerfile, a CI test job (the path-filtered reusable workflow is deferred to Faz 2,
+when a second service makes it more than premature abstraction), **OTel traces
+visible in Jaeger from this slice**.
 Governance layer-1 files born here: `Catalog/AGENTS.md`, `.claude/rules/dotnet.md`
 + `testing.md`, `DOMAIN_GLOSSARY.md`, `API_CONVENTIONS.md`, first feature plan in
 `docs/plans/active/`, `runbooks/local-development.md`.
