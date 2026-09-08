@@ -1,0 +1,15 @@
+**/bin
+**/obj
+**/node_modules
+**/.vs
+**/.idea
+.git
+.github
+.claude
+.agents
+docs
+deploy
+labs
+**/*.md
+**/.env*
+**/appsettings.Development.json

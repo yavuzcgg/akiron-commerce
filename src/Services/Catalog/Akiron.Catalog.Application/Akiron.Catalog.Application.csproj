@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Akiron.Catalog.Domain\Akiron.Catalog.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      EF Core is referenced only so ICatalogDbContext can expose DbSet<T>. The
+      alternative — a repository per aggregate — is the generic-repository layer
+      AGENTS.md forbids. See src/Services/Catalog/AGENTS.md for the full note.
+    -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="FluentValidation" />
+  </ItemGroup>
+
+</Project>

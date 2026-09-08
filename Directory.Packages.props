@@ -5,19 +5,55 @@
     <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Label="License pins">
     <!--
-      LICENSE PINS — do NOT bump these without reading docs/adr/0005 (MassTransit)
-      and docs/adr/0006 (MediatR). Later majors moved to commercial licensing.
+      Do NOT bump these without reading docs/adr/0005 (MassTransit) and
+      docs/adr/0006 (MediatR). Later majors moved to commercial licensing.
+      Declared ahead of first use so the constraint is visible in one place.
     -->
     <PackageVersion Include="MassTransit" Version="8.5.10" />
     <PackageVersion Include="MassTransit.RabbitMQ" Version="8.5.10" />
     <PackageVersion Include="MediatR" Version="12.5.0" />
+    <!-- FluentAssertions 8+ requires a paid licence; ADR-0017 picked this fork. -->
+    <PackageVersion Include="AwesomeAssertions" Version="9.6.0" />
+  </ItemGroup>
+
+  <ItemGroup Label="Persistence">
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.11" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
+    <PackageVersion Include="EFCore.NamingConventions" Version="10.0.1" />
+  </ItemGroup>
+
+  <ItemGroup Label="Web">
+    <PackageVersion Include="FluentValidation" Version="12.1.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.11" />
+    <PackageVersion Include="Scalar.AspNetCore" Version="2.17.3" />
+    <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="10.0.11" />
+  </ItemGroup>
+
+  <ItemGroup Label="Observability">
+    <PackageVersion Include="Serilog.AspNetCore" Version="10.0.0" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.18.0" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.18.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.18.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.18.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.18.0" />
+    <!-- EF Core has no stable OTel instrumentation package; Npgsql emits its own activities. -->
+    <PackageVersion Include="Npgsql.OpenTelemetry" Version="10.0.3" />
+  </ItemGroup>
+
+  <ItemGroup Label="Testing">
+    <!-- xUnit v3 hosts itself on Microsoft.Testing.Platform: no VSTest adapter, no test SDK. -->
+    <PackageVersion Include="xunit.v3" Version="4.0.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.11" />
+    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.15.0" />
+    <PackageVersion Include="Respawn" Version="7.0.0" />
   </ItemGroup>
 
   <!--
-    All other entries are added in the phase that first needs them.
-    No speculative dependencies — see AGENTS.md.
+    Entries are added in the phase that first needs them. No speculative
+    dependencies — see AGENTS.md.
   -->
 
 </Project>
