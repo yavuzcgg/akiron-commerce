@@ -11,7 +11,7 @@ public sealed class GetCategoryHandler(ICatalogDbContext dbContext)
         var category = await dbContext.Categories
             .AsNoTracking()
             .SingleOrDefaultAsync(candidate => candidate.Id == categoryId, cancellationToken)
-            ?? throw new NotFoundException($"Category '{categoryId}' was not found.");
+            ?? throw CatalogErrors.CategoryNotFound(categoryId);
 
         return CategoryResponse.From(category);
     }

@@ -26,18 +26,24 @@ public sealed partial record Slug
 
         if (value.Length == 0)
         {
-            throw new DomainValidationException("Slug must not be empty.");
+            throw new DomainValidationException(
+                CatalogErrorCodes.SlugInvalidFormat, "Slug must not be empty.");
         }
 
         if (value.Length > MaxLength)
         {
-            throw new DomainValidationException($"Slug must be at most {MaxLength} characters, but was {value.Length}.");
+            throw new DomainValidationException(
+                CatalogErrorCodes.SlugTooLong,
+                $"Slug must be at most {MaxLength} characters, but was {value.Length}.",
+                new Dictionary<string, object?> { ["maxLength"] = MaxLength });
         }
 
         if (!SlugPattern().IsMatch(value))
         {
             throw new DomainValidationException(
-                $"Slug '{value}' is invalid: use lowercase letters, digits and single hyphens, not starting or ending with a hyphen.");
+                CatalogErrorCodes.SlugInvalidFormat,
+                $"Slug '{value}' is invalid: use lowercase letters, digits and single hyphens, not starting or ending with a hyphen.",
+                new Dictionary<string, object?> { ["slug"] = value });
         }
 
         return new Slug(value);

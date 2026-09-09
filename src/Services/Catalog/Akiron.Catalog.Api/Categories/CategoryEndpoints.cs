@@ -1,8 +1,10 @@
 using Akiron.Catalog.Api.Common;
 using Akiron.Catalog.Application.Categories;
+using Akiron.Catalog.Application.Common;
 using Akiron.Catalog.Application.Categories.CreateCategory;
 using Akiron.Catalog.Application.Categories.DeleteCategory;
 using Akiron.Catalog.Application.Categories.GetCategory;
+using Akiron.Catalog.Application.Categories.ListCategories;
 using Akiron.Catalog.Application.Categories.UpdateCategory;
 using Akiron.Catalog.Domain.Categories;
 
@@ -13,6 +15,15 @@ public static class CategoryEndpoints
     public static void MapCategoryEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/v1/categories").WithTags("Categories");
+
+        group.MapGet("/", async (
+                [AsParameters] ListCategoriesRequest request,
+                ListCategoriesHandler handler,
+                CancellationToken cancellationToken) =>
+                Results.Ok(await handler.HandleAsync(request, cancellationToken)))
+            .Validate<ListCategoriesRequest>()
+            .Produces<PagedResponse<CategoryResponse>>()
+            .WithSummary("Lists categories, newest first unless sorted otherwise.");
 
         group.MapPost("/", async (
                 CreateCategoryRequest request,

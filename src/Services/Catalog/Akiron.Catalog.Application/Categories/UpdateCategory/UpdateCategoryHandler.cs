@@ -13,7 +13,7 @@ public sealed class UpdateCategoryHandler(ICatalogDbContext dbContext)
     {
         var category = await dbContext.Categories
             .SingleOrDefaultAsync(candidate => candidate.Id == categoryId, cancellationToken)
-            ?? throw new NotFoundException($"Category '{categoryId}' was not found.");
+            ?? throw CatalogErrors.CategoryNotFound(categoryId);
 
         category.Rename(request.Name);
         await dbContext.SaveChangesAsync(cancellationToken);

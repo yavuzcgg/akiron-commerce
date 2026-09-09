@@ -1,9 +1,11 @@
+using Akiron.Catalog.Domain.Common;
 using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Akiron.Catalog.Api.Common;
 
 /// <summary>
-/// Runs the FluentValidation validator for a request body before the handler sees it.
+/// Runs the FluentValidation validator for a request before the handler sees it.
 /// </summary>
 public static class ValidationEndpointFilter
 {
@@ -31,16 +33,50 @@ public static class ValidationEndpointFilter
                     return await next(invocationContext);
                 }
 
+                // Each failure carries its code alongside the English message (ADR-0018),
+                // which is why this builds the response instead of calling
+                // Results.ValidationProblem: that helper only knows how to send strings.
                 var errors = result.Errors
                     .GroupBy(failure => failure.PropertyName)
                     .ToDictionary(
-                        group => char.ToLowerInvariant(group.Key[0]) + group.Key[1..],
-                        group => group.Select(failure => failure.ErrorMessage).Distinct().ToArray());
+                        group => ToCamelCase(group.Key),
+                        group => group
+                            .Select(failure => new FieldError(
+                                string.IsNullOrEmpty(failure.ErrorCode) ? CatalogErrorCodes.ValidationFailed : failure.ErrorCode,
+                                failure.ErrorMessage))
+                            .Distinct()
+                            .ToArray());
 
-                // Results.ValidationProblem writes through IProblemDetailsService, so the
-                // traceId extension configured in Program.cs lands on this response too.
-                return Results.ValidationProblem(errors);
+                var problemDetails = new ProblemDetails
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    Title = "One or more validation errors occurred.",
+                };
+
+                problemDetails.Extensions["code"] = CatalogErrorCodes.ValidationFailed;
+                problemDetails.Extensions["errors"] = errors;
+
+                var problemDetailsService = invocationContext.HttpContext.RequestServices
+                    .GetRequiredService<IProblemDetailsService>();
+
+                invocationContext.HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+
+                await problemDetailsService.TryWriteAsync(new ProblemDetailsContext
+                {
+                    HttpContext = invocationContext.HttpContext,
+                    ProblemDetails = problemDetails,
+                });
+
+                return Results.Empty;
             })
-            .ProducesValidationProblem();
+            .ProducesProblem(StatusCodes.Status400BadRequest);
     }
+
+    private static string ToCamelCase(string propertyName) =>
+        string.IsNullOrEmpty(propertyName)
+            ? propertyName
+            : char.ToLowerInvariant(propertyName[0]) + propertyName[1..];
+
+    /// <summary>One rejected rule: the code a client branches on, and English for the log.</summary>
+    private sealed record FieldError(string Code, string Message);
 }

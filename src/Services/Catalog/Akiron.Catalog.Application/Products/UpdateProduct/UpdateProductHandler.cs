@@ -17,7 +17,7 @@ public sealed class UpdateProductHandler(ICatalogDbContext dbContext)
         // works out the SQL from what actually differs.
         var product = await dbContext.Products
             .SingleOrDefaultAsync(candidate => candidate.Id == productId, cancellationToken)
-            ?? throw new NotFoundException($"Product '{productId}' was not found.");
+            ?? throw CatalogErrors.ProductNotFound(productId);
 
         var categoryId = new CategoryId(request.CategoryId);
 
@@ -26,7 +26,7 @@ public sealed class UpdateProductHandler(ICatalogDbContext dbContext)
 
         if (!categoryExists)
         {
-            throw new NotFoundException($"Category '{categoryId}' was not found.");
+            throw CatalogErrors.CategoryNotFound(categoryId);
         }
 
         var basePrice = Money.Create(request.BasePrice, Enum.Parse<Currency>(request.Currency!, ignoreCase: true));

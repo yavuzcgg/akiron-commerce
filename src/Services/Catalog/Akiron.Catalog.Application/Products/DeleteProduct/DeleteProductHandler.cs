@@ -10,7 +10,7 @@ public sealed class DeleteProductHandler(ICatalogDbContext dbContext)
     {
         var product = await dbContext.Products
             .SingleOrDefaultAsync(candidate => candidate.Id == productId, cancellationToken)
-            ?? throw new NotFoundException($"Product '{productId}' was not found.");
+            ?? throw CatalogErrors.ProductNotFound(productId);
 
         dbContext.Products.Remove(product);
         await dbContext.SaveChangesAsync(cancellationToken);

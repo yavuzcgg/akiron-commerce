@@ -1,8 +1,10 @@
 using Akiron.Catalog.Api.Common;
 using Akiron.Catalog.Application.Products;
+using Akiron.Catalog.Application.Common;
 using Akiron.Catalog.Application.Products.CreateProduct;
 using Akiron.Catalog.Application.Products.DeleteProduct;
 using Akiron.Catalog.Application.Products.GetProduct;
+using Akiron.Catalog.Application.Products.ListProducts;
 using Akiron.Catalog.Application.Products.UpdateProduct;
 using Akiron.Catalog.Domain.Products;
 
@@ -15,6 +17,15 @@ public static class ProductEndpoints
     public static void MapProductEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/v1/products").WithTags("Products");
+
+        group.MapGet("/", async (
+                [AsParameters] ListProductsRequest request,
+                ListProductsHandler handler,
+                CancellationToken cancellationToken) =>
+                Results.Ok(await handler.HandleAsync(request, cancellationToken)))
+            .Validate<ListProductsRequest>()
+            .Produces<PagedResponse<ProductResponse>>()
+            .WithSummary("Lists products. Filters are exact matches; text search arrives with Elasticsearch in Faz 3.");
 
         group.MapPost("/", async (
                 CreateProductRequest request,

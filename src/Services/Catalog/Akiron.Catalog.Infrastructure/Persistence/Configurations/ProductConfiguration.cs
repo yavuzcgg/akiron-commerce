@@ -18,6 +18,9 @@ public sealed class ProductConfiguration : IEntityTypeConfiguration<Product>
 
         builder.Property(product => product.Name)
             .HasMaxLength(Product.MaxNameLength)
+            // Turkish sort order; see CategoryConfiguration for the measurement. The SKU
+            // column keeps the default collation: it is ASCII by construction.
+            .UseCollation("tr-TR-x-icu")
             .IsRequired();
 
         builder.Property(product => product.Description)

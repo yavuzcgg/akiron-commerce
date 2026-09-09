@@ -22,12 +22,18 @@ public sealed record Money
     {
         if (!Enum.IsDefined(currency))
         {
-            throw new DomainValidationException($"Currency '{currency}' is not supported.");
+            throw new DomainValidationException(
+                CatalogErrorCodes.MoneyUnsupportedCurrency,
+                $"Currency '{currency}' is not supported.",
+                new Dictionary<string, object?> { ["supported"] = Enum.GetNames<Currency>() });
         }
 
         if (amount < 0)
         {
-            throw new DomainValidationException($"Amount must not be negative, but was {amount}.");
+            throw new DomainValidationException(
+                CatalogErrorCodes.MoneyNegativeAmount,
+                $"Amount must not be negative, but was {amount}.",
+                new Dictionary<string, object?> { ["amount"] = amount });
         }
 
         // Rejected, not rounded. Silently dropping a third decimal is the kind of money
@@ -36,7 +42,9 @@ public sealed record Money
         if (decimal.Round(amount, DecimalPlaces) != amount)
         {
             throw new DomainValidationException(
-                $"Amount {amount} has more than {DecimalPlaces} decimal places.");
+                CatalogErrorCodes.MoneyTooManyDecimals,
+                $"Amount {amount} has more than {DecimalPlaces} decimal places.",
+                new Dictionary<string, object?> { ["amount"] = amount, ["decimalPlaces"] = DecimalPlaces });
         }
 
         return new Money(amount, currency);

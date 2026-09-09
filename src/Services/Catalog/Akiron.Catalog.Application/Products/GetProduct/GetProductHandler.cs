@@ -11,7 +11,7 @@ public sealed class GetProductHandler(ICatalogDbContext dbContext)
         var product = await dbContext.Products
             .AsNoTracking()
             .SingleOrDefaultAsync(candidate => candidate.Id == productId, cancellationToken)
-            ?? throw new NotFoundException($"Product '{productId}' was not found.");
+            ?? throw CatalogErrors.ProductNotFound(productId);
 
         return ProductResponse.From(product);
     }

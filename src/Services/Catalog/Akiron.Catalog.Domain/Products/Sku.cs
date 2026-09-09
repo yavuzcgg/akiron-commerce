@@ -31,13 +31,17 @@ public sealed partial record Sku
         if (value.Length is < MinLength or > MaxLength)
         {
             throw new DomainValidationException(
-                $"SKU must be between {MinLength} and {MaxLength} characters, but was {value.Length}.");
+                CatalogErrorCodes.SkuInvalidLength,
+                $"SKU must be between {MinLength} and {MaxLength} characters, but was {value.Length}.",
+                new Dictionary<string, object?> { ["minLength"] = MinLength, ["maxLength"] = MaxLength });
         }
 
         if (!SkuPattern().IsMatch(value))
         {
             throw new DomainValidationException(
-                $"SKU '{value}' is invalid: use letters, digits and single hyphens, not starting or ending with a hyphen.");
+                CatalogErrorCodes.SkuInvalidFormat,
+                $"SKU '{value}' is invalid: use letters, digits and single hyphens, not starting or ending with a hyphen.",
+                new Dictionary<string, object?> { ["sku"] = value });
         }
 
         return new Sku(value);

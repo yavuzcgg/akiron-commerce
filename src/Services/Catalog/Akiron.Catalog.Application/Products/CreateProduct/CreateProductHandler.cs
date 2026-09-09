@@ -22,7 +22,7 @@ public sealed class CreateProductHandler(ICatalogDbContext dbContext)
 
         if (!categoryExists)
         {
-            throw new NotFoundException($"Category '{categoryId}' was not found.");
+            throw CatalogErrors.CategoryNotFound(categoryId);
         }
 
         // Courtesy check only. Under concurrency the unique index is what actually keeps
@@ -32,7 +32,7 @@ public sealed class CreateProductHandler(ICatalogDbContext dbContext)
 
         if (skuTaken)
         {
-            throw new ConflictException($"A product with SKU '{sku}' already exists.");
+            throw CatalogErrors.ProductSkuTaken(sku);
         }
 
         var product = Product.Create(sku, request.Name, request.Description, categoryId, basePrice);

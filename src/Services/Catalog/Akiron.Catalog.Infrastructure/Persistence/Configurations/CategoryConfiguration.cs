@@ -12,6 +12,11 @@ public sealed class CategoryConfiguration : IEntityTypeConfiguration<Category>
 
         builder.Property(category => category.Name)
             .HasMaxLength(Category.MaxNameLength)
+            // Sorted with Turkish rules. Under the database default (en_US) the Turkish
+            // letters land after z, so a category list would show Celik Jant below
+            // Zincir. Measured before choosing this: en_US gives
+            // istanbul < zula < cakmak, tr-TR-x-icu gives cakmak < isi < istanbul < zula.
+            .UseCollation("tr-TR-x-icu")
             .IsRequired();
 
         builder.Property(category => category.Slug)

@@ -19,7 +19,7 @@ public sealed class CreateCategoryHandler(ICatalogDbContext dbContext)
 
         if (slugTaken)
         {
-            throw new ConflictException($"A category with slug '{slug}' already exists.");
+            throw CatalogErrors.CategorySlugTaken(slug);
         }
 
         var category = Category.Create(request.Name, slug);

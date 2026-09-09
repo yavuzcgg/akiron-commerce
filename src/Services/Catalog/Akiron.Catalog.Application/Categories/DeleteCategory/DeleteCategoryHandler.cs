@@ -10,7 +10,7 @@ public sealed class DeleteCategoryHandler(ICatalogDbContext dbContext)
     {
         var category = await dbContext.Categories
             .SingleOrDefaultAsync(candidate => candidate.Id == categoryId, cancellationToken)
-            ?? throw new NotFoundException($"Category '{categoryId}' was not found.");
+            ?? throw CatalogErrors.CategoryNotFound(categoryId);
 
         // No check for products here on purpose: the foreign key is configured to
         // restrict, so the database refuses the delete and CatalogExceptionHandler maps

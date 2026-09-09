@@ -16,9 +16,14 @@ public static class RequiredText
 
         return text.Length switch
         {
-            0 => throw new DomainValidationException($"{fieldName} must not be empty."),
+            0 => throw new DomainValidationException(
+                CatalogErrorCodes.TextRequired,
+                $"{fieldName} must not be empty.",
+                new Dictionary<string, object?> { ["field"] = fieldName }),
             var length when length > maxLength => throw new DomainValidationException(
-                $"{fieldName} must be at most {maxLength} characters, but was {length}."),
+                CatalogErrorCodes.TextTooLong,
+                $"{fieldName} must be at most {maxLength} characters, but was {length}.",
+                new Dictionary<string, object?> { ["field"] = fieldName, ["maxLength"] = maxLength }),
             _ => text,
         };
     }
@@ -36,7 +41,9 @@ public static class RequiredText
         if (text.Length > maxLength)
         {
             throw new DomainValidationException(
-                $"{fieldName} must be at most {maxLength} characters, but was {text.Length}.");
+                CatalogErrorCodes.TextTooLong,
+                $"{fieldName} must be at most {maxLength} characters, but was {text.Length}.",
+                new Dictionary<string, object?> { ["field"] = fieldName, ["maxLength"] = maxLength });
         }
 
         return text;

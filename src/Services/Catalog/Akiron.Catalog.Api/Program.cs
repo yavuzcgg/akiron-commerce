@@ -5,10 +5,12 @@ using Akiron.Catalog.Api.Products;
 using Akiron.Catalog.Application.Categories.CreateCategory;
 using Akiron.Catalog.Application.Categories.DeleteCategory;
 using Akiron.Catalog.Application.Categories.GetCategory;
+using Akiron.Catalog.Application.Categories.ListCategories;
 using Akiron.Catalog.Application.Categories.UpdateCategory;
 using Akiron.Catalog.Application.Products.CreateProduct;
 using Akiron.Catalog.Application.Products.DeleteProduct;
 using Akiron.Catalog.Application.Products.GetProduct;
+using Akiron.Catalog.Application.Products.ListProducts;
 using Akiron.Catalog.Application.Products.UpdateProduct;
 using Akiron.Catalog.Infrastructure;
 using Akiron.Catalog.Infrastructure.Persistence;
@@ -40,16 +42,20 @@ builder.Services.AddCatalogInfrastructure(connectionString);
 // anywhere in this service: the set of wired-up types stays greppable.
 builder.Services.AddScoped<CreateCategoryHandler>();
 builder.Services.AddScoped<GetCategoryHandler>();
+builder.Services.AddScoped<ListCategoriesHandler>();
 builder.Services.AddScoped<UpdateCategoryHandler>();
 builder.Services.AddScoped<DeleteCategoryHandler>();
 builder.Services.AddScoped<CreateProductHandler>();
 builder.Services.AddScoped<GetProductHandler>();
+builder.Services.AddScoped<ListProductsHandler>();
 builder.Services.AddScoped<UpdateProductHandler>();
 builder.Services.AddScoped<DeleteProductHandler>();
 builder.Services.AddScoped<IValidator<CreateCategoryRequest>, CreateCategoryRequestValidator>();
 builder.Services.AddScoped<IValidator<UpdateCategoryRequest>, UpdateCategoryRequestValidator>();
 builder.Services.AddScoped<IValidator<CreateProductRequest>, CreateProductRequestValidator>();
 builder.Services.AddScoped<IValidator<UpdateProductRequest>, UpdateProductRequestValidator>();
+builder.Services.AddScoped<IValidator<ListCategoriesRequest>, ListCategoriesRequestValidator>();
+builder.Services.AddScoped<IValidator<ListProductsRequest>, ListProductsRequestValidator>();
 
 builder.Services.AddProblemDetails(options => options.CustomizeProblemDetails = context =>
 {
