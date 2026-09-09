@@ -16,6 +16,7 @@ public static class DependencyInjection
 
         // Handlers depend on the interface; only this line knows which class implements it.
         services.AddScoped<ICatalogDbContext>(provider => provider.GetRequiredService<CatalogDbContext>());
+        services.AddScoped<IPriceListWriter, PriceListWriter>();
 
         return services;
     }

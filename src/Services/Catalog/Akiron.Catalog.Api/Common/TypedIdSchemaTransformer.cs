@@ -1,4 +1,5 @@
 using Akiron.Catalog.Domain.Categories;
+using Akiron.Catalog.Domain.Pricing;
 using Akiron.Catalog.Domain.Products;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
@@ -15,7 +16,8 @@ namespace Akiron.Catalog.Api.Common;
 /// </remarks>
 public sealed class TypedIdSchemaTransformer : IOpenApiSchemaTransformer
 {
-    private static readonly HashSet<Type> TypedIds = [typeof(CategoryId), typeof(ProductId)];
+    private static readonly HashSet<Type> TypedIds =
+        [typeof(CategoryId), typeof(ProductId), typeof(PriceGroupId)];
 
     public Task TransformAsync(
         OpenApiSchema schema,

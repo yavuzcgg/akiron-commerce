@@ -1,4 +1,5 @@
 using Akiron.Catalog.Domain.Categories;
+using Akiron.Catalog.Domain.Pricing;
 using Akiron.Catalog.Domain.Products;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +20,10 @@ public interface ICatalogDbContext
     DbSet<Category> Categories { get; }
 
     DbSet<Product> Products { get; }
+
+    DbSet<PriceGroup> PriceGroups { get; }
+
+    DbSet<PriceListEntry> PriceListEntries { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

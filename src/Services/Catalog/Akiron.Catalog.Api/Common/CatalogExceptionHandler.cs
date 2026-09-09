@@ -110,6 +110,12 @@ public sealed partial class CatalogExceptionHandler(
             "ix_products_sku" => new TranslatedError(
                 CatalogErrorCodes.ProductSkuConflict,
                 "A product with this SKU already exists."),
+            "ix_price_groups_code" => new TranslatedError(
+                CatalogErrorCodes.PriceGroupCodeConflict,
+                "A price group with this code already exists."),
+            "pk_price_list_entries" => new TranslatedError(
+                CatalogErrorCodes.Conflict,
+                "This product already has a price in this group."),
             _ => TranslatedError.From(CatalogErrors.UnexpectedConflict()),
         };
 
@@ -117,6 +123,8 @@ public sealed partial class CatalogExceptionHandler(
         postgres.ConstraintName switch
         {
             "fk_products_categories_category_id" => TranslatedError.From(CatalogErrors.CategoryHasProducts()),
+            "fk_price_list_entries_price_groups_price_group_id" =>
+                TranslatedError.From(CatalogErrors.PriceGroupHasPrices()),
             _ => new TranslatedError(
                 CatalogErrorCodes.Conflict,
                 "The request references data that does not exist, or is referenced by data that does."),

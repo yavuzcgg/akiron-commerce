@@ -23,6 +23,9 @@ public static class CatalogErrorCodes
     public const string MoneyNegativeAmount = "catalog.money.negative_amount";
     public const string MoneyTooManyDecimals = "catalog.money.too_many_decimals";
     public const string MoneyUnsupportedCurrency = "catalog.money.unsupported_currency";
+    public const string PriceGroupCodeInvalidFormat = "catalog.price_group.code_invalid_format";
+    public const string DiscountOutOfRange = "catalog.discount.out_of_range";
+    public const string PriceCurrencyMismatch = "catalog.price.currency_mismatch";
 
     // Outcomes a caller can act on.
     public const string CategoryNotFound = "catalog.category.not_found";
@@ -30,6 +33,10 @@ public static class CatalogErrorCodes
     public const string CategoryHasProducts = "catalog.category.has_products";
     public const string ProductNotFound = "catalog.product.not_found";
     public const string ProductSkuConflict = "catalog.product.sku_conflict";
+    public const string PriceGroupNotFound = "catalog.price_group.not_found";
+    public const string PriceGroupCodeConflict = "catalog.price_group.code_conflict";
+    public const string PriceGroupHasPrices = "catalog.price_group.has_prices";
+    public const string PriceListEntryNotFound = "catalog.price_list.entry_not_found";
 
     // Paging and sorting.
     public const string PageOutOfRange = "catalog.paging.page_out_of_range";

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Akiron.Catalog.Api.Categories;
 using Akiron.Catalog.Api.Common;
+using Akiron.Catalog.Api.Pricing;
 using Akiron.Catalog.Api.Products;
 using Akiron.Catalog.Application.Categories.CreateCategory;
 using Akiron.Catalog.Application.Categories.DeleteCategory;
@@ -11,6 +12,14 @@ using Akiron.Catalog.Application.Products.CreateProduct;
 using Akiron.Catalog.Application.Products.DeleteProduct;
 using Akiron.Catalog.Application.Products.GetProduct;
 using Akiron.Catalog.Application.Products.ListProducts;
+using Akiron.Catalog.Application.Pricing.CreatePriceGroup;
+using Akiron.Catalog.Application.Pricing.DeletePrice;
+using Akiron.Catalog.Application.Pricing.DeletePriceGroup;
+using Akiron.Catalog.Application.Pricing.GetPriceGroup;
+using Akiron.Catalog.Application.Pricing.ListPriceGroups;
+using Akiron.Catalog.Application.Pricing.ListPrices;
+using Akiron.Catalog.Application.Pricing.UpdatePriceGroup;
+using Akiron.Catalog.Application.Pricing.UpsertPrice;
 using Akiron.Catalog.Application.Products.UpdateProduct;
 using Akiron.Catalog.Infrastructure;
 using Akiron.Catalog.Infrastructure.Persistence;
@@ -48,6 +57,14 @@ builder.Services.AddScoped<DeleteCategoryHandler>();
 builder.Services.AddScoped<CreateProductHandler>();
 builder.Services.AddScoped<GetProductHandler>();
 builder.Services.AddScoped<ListProductsHandler>();
+builder.Services.AddScoped<CreatePriceGroupHandler>();
+builder.Services.AddScoped<GetPriceGroupHandler>();
+builder.Services.AddScoped<ListPriceGroupsHandler>();
+builder.Services.AddScoped<UpdatePriceGroupHandler>();
+builder.Services.AddScoped<DeletePriceGroupHandler>();
+builder.Services.AddScoped<UpsertPriceHandler>();
+builder.Services.AddScoped<ListPricesHandler>();
+builder.Services.AddScoped<DeletePriceHandler>();
 builder.Services.AddScoped<UpdateProductHandler>();
 builder.Services.AddScoped<DeleteProductHandler>();
 builder.Services.AddScoped<IValidator<CreateCategoryRequest>, CreateCategoryRequestValidator>();
@@ -56,6 +73,11 @@ builder.Services.AddScoped<IValidator<CreateProductRequest>, CreateProductReques
 builder.Services.AddScoped<IValidator<UpdateProductRequest>, UpdateProductRequestValidator>();
 builder.Services.AddScoped<IValidator<ListCategoriesRequest>, ListCategoriesRequestValidator>();
 builder.Services.AddScoped<IValidator<ListProductsRequest>, ListProductsRequestValidator>();
+builder.Services.AddScoped<IValidator<CreatePriceGroupRequest>, CreatePriceGroupRequestValidator>();
+builder.Services.AddScoped<IValidator<UpdatePriceGroupRequest>, UpdatePriceGroupRequestValidator>();
+builder.Services.AddScoped<IValidator<UpsertPriceRequest>, UpsertPriceRequestValidator>();
+builder.Services.AddScoped<IValidator<ListPriceGroupsRequest>, ListPriceGroupsRequestValidator>();
+builder.Services.AddScoped<IValidator<ListPricesRequest>, ListPricesRequestValidator>();
 
 builder.Services.AddProblemDetails(options => options.CustomizeProblemDetails = context =>
 {
@@ -70,6 +92,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.Converters.Add(new CategoryIdJsonConverter());
     options.SerializerOptions.Converters.Add(new ProductIdJsonConverter());
+    options.SerializerOptions.Converters.Add(new PriceGroupIdJsonConverter());
 });
 
 builder.Services.AddOpenApi(options => options.AddSchemaTransformer<TypedIdSchemaTransformer>());
@@ -116,6 +139,7 @@ app.MapHealthChecks("/health/ready");
 
 app.MapCategoryEndpoints();
 app.MapProductEndpoints();
+app.MapPriceGroupEndpoints();
 
 await app.RunAsync();
 

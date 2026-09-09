@@ -1,5 +1,6 @@
 using Akiron.Catalog.Domain.Categories;
 using Akiron.Catalog.Domain.Common;
+using Akiron.Catalog.Domain.Pricing;
 using Akiron.Catalog.Domain.Products;
 
 namespace Akiron.Catalog.Application.Common;
@@ -38,6 +39,29 @@ public static class CatalogErrors
         CatalogErrorCodes.ProductSkuConflict,
         $"A product with SKU '{sku}' already exists.",
         new Dictionary<string, object?> { ["sku"] = sku.Value });
+
+    public static NotFoundException PriceGroupNotFound(PriceGroupCode code) => new(
+        CatalogErrorCodes.PriceGroupNotFound,
+        $"Price group '{code}' was not found.",
+        new Dictionary<string, object?> { ["priceGroupCode"] = code.Value });
+
+    public static ConflictException PriceGroupCodeTaken(PriceGroupCode code) => new(
+        CatalogErrorCodes.PriceGroupCodeConflict,
+        $"A price group with code '{code}' already exists.",
+        new Dictionary<string, object?> { ["priceGroupCode"] = code.Value });
+
+    public static ConflictException PriceGroupHasPrices() => new(
+        CatalogErrorCodes.PriceGroupHasPrices,
+        "This price group still has prices. Delete them before deleting the group.");
+
+    public static NotFoundException PriceListEntryNotFound(PriceGroupCode code, ProductId productId) => new(
+        CatalogErrorCodes.PriceListEntryNotFound,
+        $"Price group '{code}' has no price for product '{productId}'.",
+        new Dictionary<string, object?>
+        {
+            ["priceGroupCode"] = code.Value,
+            ["productId"] = productId.Value,
+        });
 
     /// <summary>Raised when a unique index fires on a constraint no handler pre-checked.</summary>
     public static ConflictException UnexpectedConflict() => new(

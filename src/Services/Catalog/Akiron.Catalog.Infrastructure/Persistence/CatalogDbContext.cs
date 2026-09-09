@@ -15,12 +15,18 @@ public sealed class CatalogDbContext(DbContextOptions<CatalogDbContext> options)
 
     public DbSet<Product> Products => Set<Product>();
 
+    public DbSet<PriceGroup> PriceGroups => Set<PriceGroup>();
+
+    public DbSet<PriceListEntry> PriceListEntries => Set<PriceListEntry>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Listed one by one rather than scanned from the assembly: the set of
         // configured entities stays visible in the file you are already reading.
         modelBuilder.ApplyConfiguration(new CategoryConfiguration());
         modelBuilder.ApplyConfiguration(new ProductConfiguration());
+        modelBuilder.ApplyConfiguration(new PriceGroupConfiguration());
+        modelBuilder.ApplyConfiguration(new PriceListEntryConfiguration());
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
@@ -32,5 +38,8 @@ public sealed class CatalogDbContext(DbContextOptions<CatalogDbContext> options)
         configurationBuilder.Properties<ProductId>().HaveConversion<ProductIdConverter>();
         configurationBuilder.Properties<Sku>().HaveConversion<SkuConverter>();
         configurationBuilder.Properties<Currency>().HaveConversion<CurrencyConverter>();
+        configurationBuilder.Properties<PriceGroupId>().HaveConversion<PriceGroupIdConverter>();
+        configurationBuilder.Properties<PriceGroupCode>().HaveConversion<PriceGroupCodeConverter>();
+        configurationBuilder.Properties<DiscountPercentage>().HaveConversion<DiscountPercentageConverter>();
     }
 }
