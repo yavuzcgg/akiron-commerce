@@ -8,6 +8,7 @@ using Akiron.Catalog.Application.Pricing.GetPriceGroup;
 using Akiron.Catalog.Application.Pricing.ListPriceGroups;
 using Akiron.Catalog.Application.Pricing.ListPrices;
 using Akiron.Catalog.Application.Pricing.UpdatePriceGroup;
+using Akiron.Catalog.Application.Pricing.QuotePrices;
 using Akiron.Catalog.Application.Pricing.UpsertPrice;
 using Akiron.Catalog.Domain.Products;
 
@@ -16,6 +17,25 @@ namespace Akiron.Catalog.Api.Pricing;
 public static class PriceGroupEndpoints
 {
     private const string GetPriceGroupRouteName = "GetPriceGroupByCode";
+
+    /// <summary>
+    /// What a buyer pays, given a price group and the markup chain above them. Separate
+    /// from the price-group routes because it answers about a basket rather than about
+    /// the list itself, and it is the shape the Order service will lock into an order.
+    /// </summary>
+    public static void MapPricingEndpoints(this IEndpointRouteBuilder app)
+    {
+        app.MapPost("/api/v1/pricing/quote", async (
+                QuotePricesRequest request,
+                QuotePricesHandler handler,
+                CancellationToken cancellationToken) =>
+                Results.Ok(await handler.HandleAsync(request, cancellationToken)))
+            .WithTags("Pricing")
+            .Validate<QuotePricesRequest>()
+            .Produces<IReadOnlyList<QuotedPriceResponse>>()
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .WithSummary("Prices a basket for one price group and markup chain, with the breakdown.");
+    }
 
     public static void MapPriceGroupEndpoints(this IEndpointRouteBuilder app)
     {

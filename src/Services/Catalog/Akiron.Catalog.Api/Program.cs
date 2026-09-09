@@ -18,6 +18,7 @@ using Akiron.Catalog.Application.Pricing.DeletePriceGroup;
 using Akiron.Catalog.Application.Pricing.GetPriceGroup;
 using Akiron.Catalog.Application.Pricing.ListPriceGroups;
 using Akiron.Catalog.Application.Pricing.ListPrices;
+using Akiron.Catalog.Application.Pricing.QuotePrices;
 using Akiron.Catalog.Application.Pricing.UpdatePriceGroup;
 using Akiron.Catalog.Application.Pricing.UpsertPrice;
 using Akiron.Catalog.Application.Products.UpdateProduct;
@@ -65,6 +66,7 @@ builder.Services.AddScoped<DeletePriceGroupHandler>();
 builder.Services.AddScoped<UpsertPriceHandler>();
 builder.Services.AddScoped<ListPricesHandler>();
 builder.Services.AddScoped<DeletePriceHandler>();
+builder.Services.AddScoped<QuotePricesHandler>();
 builder.Services.AddScoped<UpdateProductHandler>();
 builder.Services.AddScoped<DeleteProductHandler>();
 builder.Services.AddScoped<IValidator<CreateCategoryRequest>, CreateCategoryRequestValidator>();
@@ -78,6 +80,7 @@ builder.Services.AddScoped<IValidator<UpdatePriceGroupRequest>, UpdatePriceGroup
 builder.Services.AddScoped<IValidator<UpsertPriceRequest>, UpsertPriceRequestValidator>();
 builder.Services.AddScoped<IValidator<ListPriceGroupsRequest>, ListPriceGroupsRequestValidator>();
 builder.Services.AddScoped<IValidator<ListPricesRequest>, ListPricesRequestValidator>();
+builder.Services.AddScoped<IValidator<QuotePricesRequest>, QuotePricesRequestValidator>();
 
 builder.Services.AddProblemDetails(options => options.CustomizeProblemDetails = context =>
 {
@@ -140,6 +143,7 @@ app.MapHealthChecks("/health/ready");
 app.MapCategoryEndpoints();
 app.MapProductEndpoints();
 app.MapPriceGroupEndpoints();
+app.MapPricingEndpoints();
 
 await app.RunAsync();
 

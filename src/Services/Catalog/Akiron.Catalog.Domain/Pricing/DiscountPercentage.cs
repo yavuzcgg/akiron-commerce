@@ -6,9 +6,10 @@ namespace Akiron.Catalog.Domain.Pricing;
 /// How much a price group takes off the list price — 10 means ten percent.
 /// </summary>
 /// <remarks>
-/// Kept as its own type rather than a shared Percentage: the markup chain in Faz 1.5
-/// will want the same arithmetic, and that is the point at which a common type earns
-/// its place. Extracting one now would be guessing at what the second caller needs.
+/// The second case turned up in Faz 1.5 and the shared type was still not extracted.
+/// <see cref="Markup"/> validates identically but means the opposite — one comes off a
+/// price, the other goes on top — and merging them would let a markup be passed where a
+/// discount belongs. Ten lines of duplicated range checking is the cheaper mistake.
 /// </remarks>
 public sealed record DiscountPercentage
 {

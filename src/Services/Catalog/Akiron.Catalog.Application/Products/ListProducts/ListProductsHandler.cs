@@ -1,5 +1,6 @@
 using Akiron.Catalog.Application.Common;
 using Akiron.Catalog.Domain.Categories;
+using Akiron.Catalog.Domain.Pricing;
 using Akiron.Catalog.Domain.Products;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,11 +21,63 @@ public sealed class ListProductsHandler(ICatalogDbContext dbContext)
             .Take(request.ResolvedPageSize)
             .ToListAsync(cancellationToken);
 
+        var responses = await WithGroupPricesAsync(products, request.PriceGroup, cancellationToken);
+
         return new PagedResponse<ProductResponse>(
-            [.. products.Select(ProductResponse.From)],
-            request.ResolvedPage,
-            request.ResolvedPageSize,
-            totalCount);
+            responses, request.ResolvedPage, request.ResolvedPageSize, totalCount);
+    }
+
+    /// <summary>
+    /// Resolves what one price group pays for the products on this page.
+    /// </summary>
+    /// <remarks>
+    /// Two queries for the page rather than one per row: the storefront renders a grid of
+    /// these, and a query per product is how a listing quietly becomes slow.
+    /// </remarks>
+    private async Task<IReadOnlyList<ProductResponse>> WithGroupPricesAsync(
+        List<Product> products,
+        string? rawPriceGroupCode,
+        CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(rawPriceGroupCode))
+        {
+            return [.. products.Select(ProductResponse.From)];
+        }
+
+        var code = PriceGroupCode.Create(rawPriceGroupCode);
+
+        var priceGroup = await dbContext.PriceGroups
+            .AsNoTracking()
+            .SingleOrDefaultAsync(candidate => candidate.Code == code, cancellationToken)
+            ?? throw CatalogErrors.PriceGroupNotFound(code);
+
+        var productIds = products.Select(product => product.Id).ToArray();
+
+        var agreedPrices = await dbContext.PriceListEntries
+            .AsNoTracking()
+            .Where(entry => entry.PriceGroupId == priceGroup.Id && productIds.Contains(entry.ProductId))
+            .ToDictionaryAsync(entry => entry.ProductId, entry => entry.Price, cancellationToken);
+
+        using var activity = CatalogActivitySource.Instance.StartActivity(CatalogActivitySource.ResolvePrices);
+        activity?.SetTag("catalog.price_group", code.Value);
+        activity?.SetTag("catalog.markup_depth", 0);
+        activity?.SetTag("catalog.product_count", products.Count);
+
+        return
+        [
+            .. products.Select(product =>
+            {
+                agreedPrices.TryGetValue(product.Id, out var agreedPrice);
+
+                // No markup chain here: a listing shows what this group pays, and the
+                // sub-dealer chain belongs to a buyer, which the catalogue does not know
+                // about until Identity arrives.
+                var quote = PriceResolver.Resolve(
+                    product.BasePrice, agreedPrice, priceGroup.Discount, MarkupChain.Empty);
+
+                return ProductResponse.From(product).WithGroupPrice(quote.FinalPrice);
+            }),
+        ];
     }
 
     private static IQueryable<Product> Filter(IQueryable<Product> query, ListProductsRequest request)

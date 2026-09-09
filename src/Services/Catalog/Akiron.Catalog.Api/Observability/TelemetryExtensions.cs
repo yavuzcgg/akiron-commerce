@@ -1,4 +1,5 @@
 using Akiron.Catalog.Api.Observability;
+using Akiron.Catalog.Application.Common;
 using Npgsql;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -39,6 +40,8 @@ public static class TelemetryExtensions
                 .AddHttpClientInstrumentation()
                 // EF Core has no stable instrumentation package; Npgsql emits spans itself.
                 .AddNpgsql()
+                // Our own spans; without this the price resolution span is created and dropped.
+                .AddSource(CatalogActivitySource.Name)
                 .AddOtlpExporterWhen(exportsTelemetry))
             .WithMetrics(metrics => metrics
                 .AddAspNetCoreInstrumentation()

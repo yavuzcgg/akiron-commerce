@@ -26,6 +26,8 @@ public static class CatalogErrorCodes
     public const string PriceGroupCodeInvalidFormat = "catalog.price_group.code_invalid_format";
     public const string DiscountOutOfRange = "catalog.discount.out_of_range";
     public const string PriceCurrencyMismatch = "catalog.price.currency_mismatch";
+    public const string MarkupOutOfRange = "catalog.markup.out_of_range";
+    public const string MarkupChainTooDeep = "catalog.markup_chain.too_deep";
 
     // Outcomes a caller can act on.
     public const string CategoryNotFound = "catalog.category.not_found";

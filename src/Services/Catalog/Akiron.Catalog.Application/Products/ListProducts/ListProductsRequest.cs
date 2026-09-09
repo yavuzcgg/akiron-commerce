@@ -21,6 +21,9 @@ public sealed record ListProductsRequest : PagingRequest
     public bool? IsActive { get; init; }
 
     public string? Sku { get; init; }
+
+    /// <summary>When given, every row also carries what this price group pays.</summary>
+    public string? PriceGroup { get; init; }
 }
 
 public sealed class ListProductsRequestValidator()

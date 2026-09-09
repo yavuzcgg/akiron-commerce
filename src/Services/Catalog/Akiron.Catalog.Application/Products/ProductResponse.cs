@@ -19,7 +19,9 @@ public sealed record ProductResponse(
     MoneyResponse BasePrice,
     bool IsActive,
     DateTimeOffset CreatedAt,
-    DateTimeOffset? UpdatedAt)
+    DateTimeOffset? UpdatedAt,
+    /// <summary>What the requested price group pays, or null when no group was asked for.</summary>
+    MoneyResponse? GroupPrice = null)
 {
     public static ProductResponse From(Product product) =>
         new(product.Id,
@@ -31,4 +33,6 @@ public sealed record ProductResponse(
             product.IsActive,
             product.CreatedAt,
             product.UpdatedAt);
+
+    public ProductResponse WithGroupPrice(Money price) => this with { GroupPrice = MoneyResponse.From(price) };
 }
