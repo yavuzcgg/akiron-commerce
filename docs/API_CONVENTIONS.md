@@ -128,13 +128,20 @@ the failures a handler can raise are built in
 | Code | Status | Parameters |
 | --- | --- | --- |
 | `catalog.category.not_found` | 404 | `categoryId` |
+| `catalog.price_group.not_found` | 404 | `priceGroupCode` |
+| `catalog.price_list.entry_not_found` | 404 | `priceGroupCode`, `productId` |
 | `catalog.product.not_found` | 404 | `productId` |
 | `catalog.category.slug_conflict` | 409 | `slug` |
 | `catalog.product.sku_conflict` | 409 | `sku` |
 | `catalog.category.has_products` | 409 | — |
+| `catalog.price_group.code_conflict` | 409 | `priceGroupCode` |
+| `catalog.price_group.has_prices` | 409 | — |
 | `catalog.slug.invalid_format` · `catalog.slug.too_long` | 400 | `slug` · `maxLength` |
 | `catalog.sku.invalid_format` · `catalog.sku.invalid_length` | 400 | `sku` · `minLength`, `maxLength` |
 | `catalog.money.negative_amount` · `catalog.money.too_many_decimals` · `catalog.money.unsupported_currency` | 400 | `amount` · `decimalPlaces` · `supported` |
+| `catalog.price_group.code_invalid_format` | 400 | `code` · `minLength`, `maxLength` |
+| `catalog.discount.out_of_range` | 400 | `discountPercentage` · `decimalPlaces` |
+| `catalog.price.currency_mismatch` | 400 | `priceGroupCurrency`, `priceCurrency` |
 | `catalog.text.required` · `catalog.text.too_long` | 400 | `field` · `maxLength` |
 | `catalog.paging.page_out_of_range` · `catalog.paging.page_size_too_large` · `catalog.paging.sort_not_supported` | 400 | — |
 | `validation_failed` | 400 | see `errors` |
@@ -143,6 +150,27 @@ the failures a handler can raise are built in
 The `catalog.text.*` and value-object codes normally never reach a client: request
 validation rejects bad input first. They fire when something bypasses the endpoint, so
 treat them as a developer signal rather than a message to show.
+
+## Prices
+
+A price group fixes its **currency** at creation and every price inside it inherits that
+currency — the request body for a price carries only an amount. A dealer who buys in
+dollars is assigned a dollar group; converting between currencies is a separate concern
+with its own exchange rates, designed in Faz 2 when Identity brings the dealer's own
+currency.
+
+Setting a price is a `PUT`, and it means it: **201** the first time, **200** every time
+after, whatever order concurrent callers arrive in. That guarantee comes from a single
+`INSERT ... ON CONFLICT DO UPDATE` rather than a read followed by a write, because the
+gap between those two steps is one that two callers can both fall into.
+
+Delete behaviour differs on purpose, and the difference is the rule:
+
+| Deleting | Effect |
+| --- | --- |
+| A product | Its prices go with it — a price for a product that no longer exists has nothing left to mean |
+| A price group holding prices | Refused with 409 — wiping a list of agreed dealer prices must be deliberate |
+| A category holding products | Refused with 409 |
 
 ## Discovering the API
 
