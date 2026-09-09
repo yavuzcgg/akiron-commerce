@@ -7,7 +7,7 @@ description: End-of-session ritual — walks the Definition of Done chain, write
 
 Walk this chain in order. Skip a step only if it does not apply, and say so.
 
-1. **Format & build** — `dotnet format` on touched projects (once real code exists), then `dotnet build AkironCommerce.slnx --configuration Release`. Warnings are errors; fix, never suppress.
+1. **Format & build** — `dotnet format` on touched projects (once real code exists), then `dotnet build AkironCommerce.sln --configuration Release`. Warnings are errors; fix, never suppress.
 2. **Tests** — run unit + integration tests for every service touched this session. Frontend touched → `pnpm lint && pnpm test` in `frontend/`. Name any suite you did not run and why.
 3. **Diff review** — `git status` + `git diff`; confirm the diff is narrowly aligned with the session's tasks (AGENTS.md Scope Discipline). Unrelated changes get reverted or moved to their own commit with an explanation.
 4. **Docs matrix** — did this session: change architecture → ADR updated/created? · add an integration event → `docs/EVENT_CATALOG.md`? · create a procedure → runbook? · change scope → `docs/ROADMAP.md`? · finish a feature plan → move it to `docs/plans/completed/`?

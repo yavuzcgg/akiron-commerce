@@ -24,7 +24,7 @@ jobs:
           key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', 'Directory.Packages.props') }}
           restore-keys: nuget-${{ runner.os }}-
       # Warnings are errors via Directory.Build.props.
-      - run: dotnet build AkironCommerce.slnx --configuration Release
+      - run: dotnet build AkironCommerce.sln --configuration Release
 
   test:
     name: dotnet test
@@ -41,7 +41,7 @@ jobs:
           restore-keys: nuget-${{ runner.os }}-
       # No services: block — the integration tests start their own PostgreSQL through
       # Testcontainers, using the Docker daemon the runner already has.
-      - run: dotnet test AkironCommerce.slnx --configuration Release
+      - run: dotnet test AkironCommerce.sln --configuration Release
 
   docker:
     name: docker build

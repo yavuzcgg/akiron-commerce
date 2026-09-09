@@ -11,7 +11,7 @@ which is already a strong portfolio artifact on its own.
 
 - [x] `git init` + public GitHub repo + first push on day one
 - [x] Governance core: `AGENTS.md`, `CLAUDE.md`, `ARCHITECTURE.md`, `docs/` (SYSTEM_ARCHITECTURE, ROADMAP, DATA_OWNERSHIP), ADR batch, devlog, 2 skills
-- [x] Build foundation: `.slnx` + CPM (`Directory.Packages.props` license pins) + `Directory.Build.props` (warnings-as-errors)
+- [x] Build foundation: `.sln` + CPM (`Directory.Packages.props` license pins) + `Directory.Build.props` (warnings-as-errors)
 - [x] Infra compose (PG 16 / Redis 8 / RabbitMQ 4.1 / ES 9.5 / Jaeger 2 / Aspire dashboard / Mailpit), all pinned, healthchecked
 - [x] CI green on the empty solution (build + compose validate)
 - [x] All infra containers healthy via `docker compose up`
