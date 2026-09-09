@@ -1,4 +1,5 @@
 using Akiron.Catalog.Domain.Categories;
+using Akiron.Catalog.Domain.Products;
 using Microsoft.EntityFrameworkCore;
 
 namespace Akiron.Catalog.Application.Common;
@@ -16,6 +17,8 @@ namespace Akiron.Catalog.Application.Common;
 public interface ICatalogDbContext
 {
     DbSet<Category> Categories { get; }
+
+    DbSet<Product> Products { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

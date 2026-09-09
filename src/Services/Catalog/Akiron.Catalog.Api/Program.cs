@@ -1,8 +1,15 @@
 using System.Diagnostics;
 using Akiron.Catalog.Api.Categories;
 using Akiron.Catalog.Api.Common;
+using Akiron.Catalog.Api.Products;
 using Akiron.Catalog.Application.Categories.CreateCategory;
+using Akiron.Catalog.Application.Categories.DeleteCategory;
 using Akiron.Catalog.Application.Categories.GetCategory;
+using Akiron.Catalog.Application.Categories.UpdateCategory;
+using Akiron.Catalog.Application.Products.CreateProduct;
+using Akiron.Catalog.Application.Products.DeleteProduct;
+using Akiron.Catalog.Application.Products.GetProduct;
+using Akiron.Catalog.Application.Products.UpdateProduct;
 using Akiron.Catalog.Infrastructure;
 using Akiron.Catalog.Infrastructure.Persistence;
 using FluentValidation;
@@ -33,7 +40,16 @@ builder.Services.AddCatalogInfrastructure(connectionString);
 // anywhere in this service: the set of wired-up types stays greppable.
 builder.Services.AddScoped<CreateCategoryHandler>();
 builder.Services.AddScoped<GetCategoryHandler>();
+builder.Services.AddScoped<UpdateCategoryHandler>();
+builder.Services.AddScoped<DeleteCategoryHandler>();
+builder.Services.AddScoped<CreateProductHandler>();
+builder.Services.AddScoped<GetProductHandler>();
+builder.Services.AddScoped<UpdateProductHandler>();
+builder.Services.AddScoped<DeleteProductHandler>();
 builder.Services.AddScoped<IValidator<CreateCategoryRequest>, CreateCategoryRequestValidator>();
+builder.Services.AddScoped<IValidator<UpdateCategoryRequest>, UpdateCategoryRequestValidator>();
+builder.Services.AddScoped<IValidator<CreateProductRequest>, CreateProductRequestValidator>();
+builder.Services.AddScoped<IValidator<UpdateProductRequest>, UpdateProductRequestValidator>();
 
 builder.Services.AddProblemDetails(options => options.CustomizeProblemDetails = context =>
 {
@@ -45,7 +61,10 @@ builder.Services.AddProblemDetails(options => options.CustomizeProblemDetails = 
 builder.Services.AddExceptionHandler<CatalogExceptionHandler>();
 
 builder.Services.ConfigureHttpJsonOptions(options =>
-    options.SerializerOptions.Converters.Add(new CategoryIdJsonConverter()));
+{
+    options.SerializerOptions.Converters.Add(new CategoryIdJsonConverter());
+    options.SerializerOptions.Converters.Add(new ProductIdJsonConverter());
+});
 
 builder.Services.AddOpenApi(options => options.AddSchemaTransformer<TypedIdSchemaTransformer>());
 
@@ -90,6 +109,7 @@ app.MapGet("/health", () => Results.Ok(new { status = "healthy" })).ExcludeFromD
 app.MapHealthChecks("/health/ready");
 
 app.MapCategoryEndpoints();
+app.MapProductEndpoints();
 
 await app.RunAsync();
 

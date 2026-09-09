@@ -70,6 +70,11 @@ public sealed partial class CatalogExceptionHandler(
         DbUpdateException { InnerException: PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } postgres } =>
             (StatusCodes.Status409Conflict, "Conflict", DescribeUniqueViolation(postgres)),
 
+        // A restricted foreign key refused the write: something still points at the row
+        // being deleted, or the row being referenced is gone.
+        DbUpdateException { InnerException: PostgresException { SqlState: PostgresErrorCodes.ForeignKeyViolation } foreignKey } =>
+            (StatusCodes.Status409Conflict, "Conflict", DescribeForeignKeyViolation(foreignKey)),
+
         DomainException domain =>
             (StatusCodes.Status400BadRequest, "Invalid request", domain.Message),
 
@@ -81,7 +86,15 @@ public sealed partial class CatalogExceptionHandler(
     private static string DescribeUniqueViolation(PostgresException postgres) => postgres.ConstraintName switch
     {
         "ix_categories_slug" => "A category with this slug already exists.",
+        "ix_products_sku" => "A product with this SKU already exists.",
         _ => "The request conflicts with data that already exists.",
+    };
+
+    private static string DescribeForeignKeyViolation(PostgresException postgres) => postgres.ConstraintName switch
+    {
+        "fk_products_categories_category_id" =>
+            "This category still has products. Move or delete them before deleting the category.",
+        _ => "The request references data that does not exist, or is referenced by data that does.",
     };
 
     // Source-generated logging: the message template is compiled once instead of being

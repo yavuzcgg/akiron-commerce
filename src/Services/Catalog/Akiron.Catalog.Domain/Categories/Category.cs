@@ -50,16 +50,6 @@ public sealed class Category
     /// backstop: an entity must not be constructible in an invalid state, whatever
     /// the caller forgot to check.
     /// </summary>
-    private static string NormaliseName(string? name)
-    {
-        var value = name?.Trim() ?? string.Empty;
-
-        return value.Length switch
-        {
-            0 => throw new DomainValidationException("Category name must not be empty."),
-            > MaxNameLength => throw new DomainValidationException(
-                $"Category name must be at most {MaxNameLength} characters, but was {value.Length}."),
-            _ => value,
-        };
-    }
+    private static string NormaliseName(string? name) =>
+        RequiredText.Normalise(name, MaxNameLength, "Category name");
 }
