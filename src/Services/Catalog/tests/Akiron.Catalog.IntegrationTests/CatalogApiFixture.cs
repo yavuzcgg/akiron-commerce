@@ -1,8 +1,9 @@
 using System.Text.Json;
-using Akiron.Catalog.Api.Common;
 using Akiron.Catalog.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Npgsql;
 using Respawn;
 using Respawn.Graph;
@@ -28,11 +29,18 @@ public sealed class CatalogApiFixture : IAsyncLifetime
     private NpgsqlConnection? _connection;
     private Respawner? _respawner;
 
-    /// <summary>Serializer settings that mirror the API's, typed ids included.</summary>
-    public static JsonSerializerOptions Json { get; } = new(JsonSerializerDefaults.Web)
-    {
-        Converters = { new CategoryIdJsonConverter() },
-    };
+    /// <summary>
+    /// The serializer options the running API uses, read out of its own container.
+    /// </summary>
+    /// <remarks>
+    /// Deliberately not a hand-written copy. A separate list here drifts the moment a
+    /// converter is added on one side only — which is exactly how the first product
+    /// tests failed: the API knew how to write a ProductId and the tests did not know
+    /// how to read one.
+    /// </remarks>
+    public JsonSerializerOptions Json =>
+        (_factory ?? throw new InvalidOperationException("Fixture is not initialised."))
+        .Services.GetRequiredService<IOptions<JsonOptions>>().Value.SerializerOptions;
 
     public HttpClient CreateClient() =>
         (_factory ?? throw new InvalidOperationException("Fixture is not initialised.")).CreateClient();

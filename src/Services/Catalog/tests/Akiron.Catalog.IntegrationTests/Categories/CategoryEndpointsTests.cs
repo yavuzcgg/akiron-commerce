@@ -32,13 +32,13 @@ public sealed class CategoryEndpointsTests(CatalogApiFixture fixture) : IAsyncLi
         created.Headers.Location.Should().NotBeNull("a 201 must point at the resource it created");
 
         var body = await created.Content.ReadFromJsonAsync<CategoryResponse>(
-            CatalogApiFixture.Json, TestContext.Current.CancellationToken);
+            fixture.Json, TestContext.Current.CancellationToken);
         body.Should().NotBeNull();
         body!.Name.Should().Be("Kış Lastikleri");
         body.Slug.Should().Be("kis-lastikleri");
 
         var fetched = await client.GetFromJsonAsync<CategoryResponse>(
-            $"/api/v1/categories/{body.Id.Value}", CatalogApiFixture.Json, TestContext.Current.CancellationToken);
+            $"/api/v1/categories/{body.Id.Value}", fixture.Json, TestContext.Current.CancellationToken);
 
         fetched.Should().BeEquivalentTo(body);
     }
