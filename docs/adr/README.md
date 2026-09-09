@@ -24,3 +24,4 @@ Create new ones with the `create-adr` skill.
 | [0015](0015-no-aspire-apphost.md) | No .NET Aspire AppHost; standalone dashboard only | Accepted |
 | [0016](0016-naming-monorepo-public-repo.md) | `Akiron.*` naming, monorepo, public repository | Accepted |
 | [0017](0017-assertion-library-licensing.md) | AwesomeAssertions for test assertions (licence) | Accepted |
+| [0018](0018-error-codes-not-translated-messages.md) | API returns error codes; clients translate | Accepted |
