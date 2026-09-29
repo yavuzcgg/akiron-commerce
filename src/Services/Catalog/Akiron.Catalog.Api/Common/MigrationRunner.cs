@@ -16,7 +16,11 @@ public static partial class MigrationRunner
     public static async Task ApplyAsync(WebApplication app)
     {
         using var scope = app.Services.CreateScope();
-        var logger = scope.ServiceProvider.GetRequiredService<ILogger<WebApplication>>();
+        // Our own category, not ILogger<WebApplication>: that one is filed under
+        // Microsoft.AspNetCore, which appsettings turns down to Warning, so every
+        // Information line written through it was silently dropped.
+        var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>()
+            .CreateLogger(typeof(MigrationRunner).FullName!);
 
         try
         {

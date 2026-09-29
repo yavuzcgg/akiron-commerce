@@ -132,6 +132,11 @@ if (app.Environment.IsDevelopment())
     {
         await MigrationRunner.ApplyAsync(app);
     }
+
+    if (builder.Configuration.GetValue("Catalog:SeedDevelopmentData", defaultValue: true))
+    {
+        await DevelopmentSeeder.ApplyAsync(app);
+    }
 }
 
 // Liveness: answers as long as the process is up, and deliberately touches nothing.
