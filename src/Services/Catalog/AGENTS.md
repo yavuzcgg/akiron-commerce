@@ -21,6 +21,11 @@ Full table: `docs/DATA_OWNERSHIP.md`.
 - **Every id is a typed id.** Register the conversion once in `CatalogDbContext.ConfigureConventions`, and give it a JSON converter plus an entry in `TypedIdSchemaTransformer` so the wire format and the OpenAPI document agree.
 - **Prices are server-authoritative** (ADR-0012). A price arriving in a request is an input to a calculation, never the answer.
 
+Most of these are enforced, not just written: `tests/Akiron.Catalog.ArchitectureTests`
+checks layers and folder rules against the compiled assemblies, and `WiringTests` checks
+that every handler, validator and typed id is actually registered. A new structural rule
+gets a test there, and has to be seen failing once before it counts.
+
 ## Persistence
 
 PostgreSQL `akiron_catalog`, snake_case naming, entity configurations listed one

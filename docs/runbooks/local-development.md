@@ -99,6 +99,39 @@ The value objects validate on the way *out* of the database as well as in. Editi
 to load with a 400 rather than sitting there quietly. That is intentional — but it means
 hand-edits should respect the same rules the API does.
 
+## Seed data
+
+In Development, an **empty** catalogue is filled on startup with six categories, eleven
+tyre-shop products, three price groups (`BAYI-A` 20%, `TOPTAN` 12%, `PERAKENDE` 0%) and
+two agreed prices in `BAYI-A`. A catalogue that already has any category is left alone,
+so the seed never mixes with data you entered yourself.
+
+Good first requests in Scalar:
+
+- `GET /api/v1/categories?sort=name` — Ç, İ and Ş in their alphabet places.
+- `GET /api/v1/products?priceGroup=BAYI-A` — every row with its dealer price.
+- `POST /api/v1/pricing/quote` with `BAYI-A`, a markup chain like `[10, 10]` and two product ids — one comes back as `AgreedPrice`, the other as `GroupDiscount`.
+
+To start over from the seed: `docker compose -f deploy/compose/docker-compose.infra.yml down -v`,
+then `up` again and F5. (`-v` deletes **every** service's database.) To turn seeding off,
+set `Catalog:SeedDevelopmentData` to `false`.
+
+## Running the service as a container
+
+The same check CI runs on every push. The build context is the repository root:
+
+```powershell
+docker build -f src/Services/Catalog/Akiron.Catalog.Api/Dockerfile -t akiron-catalog .
+docker run --rm -p 127.0.0.1:5299:8080 --network akiron-infra_default `
+  -e ASPNETCORE_ENVIRONMENT=Development `
+  -e "ConnectionStrings__CatalogDb=Host=akiron-postgres;Port=5432;Database=akiron_catalog;Username=akiron;Password=akiron_dev" `
+  akiron-catalog
+```
+
+Inside the compose network the database is `akiron-postgres:5432` — 5433 is only the
+port published to your machine. Without `ASPNETCORE_ENVIRONMENT=Development` the
+container neither migrates nor seeds and serves no Scalar, exactly as in production.
+
 ## Common situations
 
 **Docker Desktop was closed.** Containers stop with it. Start Docker, then re-run the

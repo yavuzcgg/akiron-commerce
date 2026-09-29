@@ -16,17 +16,23 @@ which is already a strong portfolio artifact on its own.
 - [x] CI green on the empty solution (build + compose validate)
 - [x] All infra containers healthy via `docker compose up`
 
-### Faz 1 — Catalog slice (→ mid-Oct 2026, 4–5 wk) — IN PROGRESS
+### Faz 1 — Catalog slice (Aug–Sep 2026, done 2026-09-29) — COMPLETE
 
 Catalog end-to-end: domain (price groups + markup chain), EF Core + first
 migration, minimal-API endpoint modules, Testcontainers integration tests,
 Dockerfile, a CI test job (the path-filtered reusable workflow is deferred to Faz 2,
 when a second service makes it more than premature abstraction), **OTel traces
 visible in Jaeger from this slice**.
-Governance layer-1 files born here: `Catalog/AGENTS.md`, `.claude/rules/dotnet.md`
-+ `testing.md`, `DOMAIN_GLOSSARY.md`, `API_CONVENTIONS.md`, first feature plan in
-`docs/plans/active/`, `runbooks/local-development.md`.
 **Demo:** product/category API answering, traces in Jaeger, tests green in CI.
+
+- [x] 1.0–1.1 Category end-to-end: domain, EF Core + migrations, endpoints, Testcontainers tests, Dockerfile, Jaeger traces
+- [x] 1.2 Products, typed ids, Turkish collation
+- [x] 1.3 Paging/filtering/sorting envelope, error-code contract (ADR-0018)
+- [x] 1.4 Price groups, price lists, the upsert race lab
+- [x] 1.5 Markup chain, `PriceResolver`, `POST /pricing/quote`
+- [x] 1.6 Architecture + wiring tests, development seed, `DOMAIN_GLOSSARY.md`, CI container smoke test
+- [x] Governance layer-1 files: `Catalog/AGENTS.md`, `.claude/rules/dotnet.md` + `testing.md`, `DOMAIN_GLOSSARY.md`, `API_CONVENTIONS.md`, `runbooks/local-development.md`
+- [ ] ~~First feature plan in `docs/plans/active/`~~ — not done: slice plans lived in the session's plan mode and never reached the repo. **Carried to Faz 2:** each slice plan is saved under `docs/plans/active/` before implementation starts.
 
 ### Faz 2 — Identity + Gateway + Frontend shell (→ end of Nov 2026, 5–6 wk)
 
