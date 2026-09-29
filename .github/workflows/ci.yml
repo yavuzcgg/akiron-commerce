@@ -25,6 +25,9 @@ jobs:
           restore-keys: nuget-${{ runner.os }}-
       # Warnings are errors via Directory.Build.props.
       - run: dotnet build AkironCommerce.sln --configuration Release
+      # The first step of the Definition of Done. Without it, drift from .editorconfig
+      # only shows up when someone happens to run the formatter locally.
+      - run: dotnet format AkironCommerce.sln --verify-no-changes --no-restore
 
   test:
     name: dotnet test
