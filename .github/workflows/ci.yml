@@ -44,7 +44,7 @@ jobs:
       - run: dotnet test AkironCommerce.sln --configuration Release
 
   docker:
-    name: docker build
+    name: docker build + smoke
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -54,8 +54,35 @@ jobs:
           context: .
           file: src/Services/Catalog/Akiron.Catalog.Api/Dockerfile
           push: false
+          load: true
+          tags: akiron-catalog:ci
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      # A built image is not a working one: this boots it against a real PostgreSQL and
+      # waits for readiness, which only passes once migrations have created the tables.
+      # Development is what turns startup migrations (and the seed) on.
+      - name: smoke test the image
+        run: |
+          docker network create smoke
+          docker run -d --name smoke-db --network smoke \
+            -e POSTGRES_USER=akiron -e POSTGRES_PASSWORD=smoke -e POSTGRES_DB=akiron_catalog \
+            postgres:16-alpine
+          # Over TCP on purpose: the entrypoint's temporary init server answers on the
+          # socket only, and would pass a socket check just before it restarts.
+          until docker exec smoke-db pg_isready -h 127.0.0.1 -U akiron -d akiron_catalog; do sleep 1; done
+          docker run -d --name smoke-api --network smoke -p 8080:8080 \
+            -e ASPNETCORE_ENVIRONMENT=Development \
+            -e "ConnectionStrings__CatalogDb=Host=smoke-db;Database=akiron_catalog;Username=akiron;Password=smoke" \
+            akiron-catalog:ci
+          for attempt in $(seq 1 30); do
+            if curl -sf http://localhost:8080/health/ready; then
+              curl -sf "http://localhost:8080/api/v1/products?pageSize=1" > /dev/null
+              exit 0
+            fi
+            sleep 1
+          done
+          docker logs smoke-api
+          exit 1
 
   compose-validate:
     name: compose config
