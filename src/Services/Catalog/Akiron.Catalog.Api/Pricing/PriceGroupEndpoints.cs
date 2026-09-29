@@ -7,8 +7,8 @@ using Akiron.Catalog.Application.Pricing.DeletePriceGroup;
 using Akiron.Catalog.Application.Pricing.GetPriceGroup;
 using Akiron.Catalog.Application.Pricing.ListPriceGroups;
 using Akiron.Catalog.Application.Pricing.ListPrices;
-using Akiron.Catalog.Application.Pricing.UpdatePriceGroup;
 using Akiron.Catalog.Application.Pricing.QuotePrices;
+using Akiron.Catalog.Application.Pricing.UpdatePriceGroup;
 using Akiron.Catalog.Application.Pricing.UpsertPrice;
 using Akiron.Catalog.Domain.Products;
 

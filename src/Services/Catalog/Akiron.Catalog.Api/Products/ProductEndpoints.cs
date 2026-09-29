@@ -1,6 +1,6 @@
 using Akiron.Catalog.Api.Common;
-using Akiron.Catalog.Application.Products;
 using Akiron.Catalog.Application.Common;
+using Akiron.Catalog.Application.Products;
 using Akiron.Catalog.Application.Products.CreateProduct;
 using Akiron.Catalog.Application.Products.DeleteProduct;
 using Akiron.Catalog.Application.Products.GetProduct;

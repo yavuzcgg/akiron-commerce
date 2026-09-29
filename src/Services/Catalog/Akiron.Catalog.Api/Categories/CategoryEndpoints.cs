@@ -1,11 +1,11 @@
 using Akiron.Catalog.Api.Common;
 using Akiron.Catalog.Application.Categories;
-using Akiron.Catalog.Application.Common;
 using Akiron.Catalog.Application.Categories.CreateCategory;
 using Akiron.Catalog.Application.Categories.DeleteCategory;
 using Akiron.Catalog.Application.Categories.GetCategory;
 using Akiron.Catalog.Application.Categories.ListCategories;
 using Akiron.Catalog.Application.Categories.UpdateCategory;
+using Akiron.Catalog.Application.Common;
 using Akiron.Catalog.Domain.Categories;
 
 namespace Akiron.Catalog.Api.Categories;
