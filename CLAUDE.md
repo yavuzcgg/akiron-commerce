@@ -3,6 +3,7 @@
 # Claude Code — project-specific
 
 - Use plan mode before: architectural changes, changes spanning multiple services, database schema changes, messaging changes, security-sensitive changes.
+- Once a plan is approved, save it to `docs/plans/active/<slice>.md` before writing code. Plan mode's own file lives outside the repo and is lost — Faz 1's plans were.
 - Before implementing, locate and read the relevant ADRs under `docs/adr/`.
 - Do not implement a proposed architecture until its trade-offs have been explained to the owner.
 - Roles: Claude Code writes the code. Codex is used by the owner for plan/design review — do not delegate implementation to it.

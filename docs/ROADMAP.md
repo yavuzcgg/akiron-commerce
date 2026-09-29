@@ -32,7 +32,7 @@ visible in Jaeger from this slice**.
 - [x] 1.5 Markup chain, `PriceResolver`, `POST /pricing/quote`
 - [x] 1.6 Architecture + wiring tests, development seed, `DOMAIN_GLOSSARY.md`, CI container smoke test
 - [x] Governance layer-1 files: `Catalog/AGENTS.md`, `.claude/rules/dotnet.md` + `testing.md`, `DOMAIN_GLOSSARY.md`, `API_CONVENTIONS.md`, `runbooks/local-development.md`
-- [ ] ~~First feature plan in `docs/plans/active/`~~ — not done: slice plans lived in the session's plan mode and never reached the repo. **Carried to Faz 2:** each slice plan is saved under `docs/plans/active/` before implementation starts.
+- [ ] ~~First feature plan in `docs/plans/active/`~~ — not done: slice plans lived in the session's plan mode and never reached the repo. **Fixed 2026-09-29:** the rule is now in `CLAUDE.md`, and the Faz 2 phase plan is the first file in `docs/plans/active/`.
 
 ### Faz 2 — Identity + Gateway + Frontend shell (→ end of Nov 2026, 5–6 wk)
 
