@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akiron.Catalog.UnitTests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akiron.Catalog.IntegrationTests", "src\Services\Catalog\tests\Akiron.Catalog.IntegrationTests\Akiron.Catalog.IntegrationTests.csproj", "{BB8FAEB4-3EEB-44F4-8299-25446FCFE362}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akiron.Catalog.ArchitectureTests", "src\Services\Catalog\tests\Akiron.Catalog.ArchitectureTests\Akiron.Catalog.ArchitectureTests.csproj", "{B5B81B0A-B70A-444A-85E8-BCAB51B42ECD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,6 +107,18 @@ Global
 		{BB8FAEB4-3EEB-44F4-8299-25446FCFE362}.Release|x64.Build.0 = Release|Any CPU
 		{BB8FAEB4-3EEB-44F4-8299-25446FCFE362}.Release|x86.ActiveCfg = Release|Any CPU
 		{BB8FAEB4-3EEB-44F4-8299-25446FCFE362}.Release|x86.Build.0 = Release|Any CPU
+		{B5B81B0A-B70A-444A-85E8-BCAB51B42ECD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5B81B0A-B70A-444A-85E8-BCAB51B42ECD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5B81B0A-B70A-444A-85E8-BCAB51B42ECD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B5B81B0A-B70A-444A-85E8-BCAB51B42ECD}.Debug|x64.Build.0 = Debug|Any CPU
+		{B5B81B0A-B70A-444A-85E8-BCAB51B42ECD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B5B81B0A-B70A-444A-85E8-BCAB51B42ECD}.Debug|x86.Build.0 = Debug|Any CPU
+		{B5B81B0A-B70A-444A-85E8-BCAB51B42ECD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5B81B0A-B70A-444A-85E8-BCAB51B42ECD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5B81B0A-B70A-444A-85E8-BCAB51B42ECD}.Release|x64.ActiveCfg = Release|Any CPU
+		{B5B81B0A-B70A-444A-85E8-BCAB51B42ECD}.Release|x64.Build.0 = Release|Any CPU
+		{B5B81B0A-B70A-444A-85E8-BCAB51B42ECD}.Release|x86.ActiveCfg = Release|Any CPU
+		{B5B81B0A-B70A-444A-85E8-BCAB51B42ECD}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -119,5 +133,6 @@ Global
 		{583F9C51-22B8-59F5-4A60-045B52DD079E} = {C91C1CF1-1625-0789-F869-53D87D6277BA}
 		{9BC171A1-94D6-4D73-8760-B3AE2D07A117} = {583F9C51-22B8-59F5-4A60-045B52DD079E}
 		{BB8FAEB4-3EEB-44F4-8299-25446FCFE362} = {583F9C51-22B8-59F5-4A60-045B52DD079E}
+		{B5B81B0A-B70A-444A-85E8-BCAB51B42ECD} = {583F9C51-22B8-59F5-4A60-045B52DD079E}
 	EndGlobalSection
 EndGlobal

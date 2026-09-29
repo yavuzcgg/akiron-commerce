@@ -42,6 +42,10 @@ public sealed class CatalogApiFixture : IAsyncLifetime
         (_factory ?? throw new InvalidOperationException("Fixture is not initialised."))
         .Services.GetRequiredService<IOptions<JsonOptions>>().Value.SerializerOptions;
 
+    /// <summary>The running API's container, for checking what it actually wired up.</summary>
+    public IServiceProvider Services =>
+        (_factory ?? throw new InvalidOperationException("Fixture is not initialised.")).Services;
+
     public HttpClient CreateClient() =>
         (_factory ?? throw new InvalidOperationException("Fixture is not initialised.")).CreateClient();
 
