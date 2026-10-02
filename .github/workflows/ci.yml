@@ -47,39 +47,56 @@ jobs:
       - run: dotnet test AkironCommerce.sln --configuration Release
 
   docker:
-    name: docker build + smoke
+    name: docker build + smoke (${{ matrix.service }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - service: catalog
+            dockerfile: src/Services/Catalog/Akiron.Catalog.Api/Dockerfile
+            connection-key: ConnectionStrings__CatalogDb
+            probe: /api/v1/products?pageSize=1
+            extra-env: ""
+          - service: identity
+            dockerfile: src/Services/Identity/Akiron.Identity.Api/Dockerfile
+            connection-key: ConnectionStrings__IdentityDb
+            probe: /.well-known/jwks.json
+            # /app is not writable by the image's non-root user, so the generated
+            # development key goes to /tmp. The image itself never contains a key.
+            extra-env: -e Identity__SigningKeyPath=/tmp/identity-signing-key.pem
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
       - uses: docker/build-push-action@v6
         with:
           context: .
-          file: src/Services/Catalog/Akiron.Catalog.Api/Dockerfile
+          file: ${{ matrix.dockerfile }}
           push: false
           load: true
-          tags: akiron-catalog:ci
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          tags: akiron-${{ matrix.service }}:ci
+          cache-from: type=gha,scope=${{ matrix.service }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
       # A built image is not a working one: this boots it against a real PostgreSQL and
       # waits for readiness, which only passes once migrations have created the tables.
-      # Development is what turns startup migrations (and the seed) on.
+      # Development is what turns startup migrations on.
       - name: smoke test the image
         run: |
           docker network create smoke
           docker run -d --name smoke-db --network smoke \
-            -e POSTGRES_USER=akiron -e POSTGRES_PASSWORD=smoke -e POSTGRES_DB=akiron_catalog \
+            -e POSTGRES_USER=akiron -e POSTGRES_PASSWORD=smoke -e POSTGRES_DB=akiron \
             postgres:16-alpine
           # Over TCP on purpose: the entrypoint's temporary init server answers on the
           # socket only, and would pass a socket check just before it restarts.
-          until docker exec smoke-db pg_isready -h 127.0.0.1 -U akiron -d akiron_catalog; do sleep 1; done
+          until docker exec smoke-db pg_isready -h 127.0.0.1 -U akiron -d akiron; do sleep 1; done
           docker run -d --name smoke-api --network smoke -p 8080:8080 \
             -e ASPNETCORE_ENVIRONMENT=Development \
-            -e "ConnectionStrings__CatalogDb=Host=smoke-db;Database=akiron_catalog;Username=akiron;Password=smoke" \
-            akiron-catalog:ci
+            -e "${{ matrix.connection-key }}=Host=smoke-db;Database=akiron;Username=akiron;Password=smoke" \
+            ${{ matrix.extra-env }} \
+            akiron-${{ matrix.service }}:ci
           for attempt in $(seq 1 30); do
             if curl -sf http://localhost:8080/health/ready; then
-              curl -sf "http://localhost:8080/api/v1/products?pageSize=1" > /dev/null
+              curl -sf "http://localhost:8080${{ matrix.probe }}" > /dev/null
               exit 0
             fi
             sleep 1
