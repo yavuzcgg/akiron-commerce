@@ -10,7 +10,8 @@ service introducing it must add it in the same PR.
 | Price-group **assignment** (dealer → group) | Identity | `akiron_identity` |
 | Permission flags | Identity | `akiron_identity` |
 | Product, category, attributes | Catalog | `akiron_catalog` |
-| Price lists, markup chain **definition** | Catalog | `akiron_catalog` |
+| Price groups, price lists, price **resolution** (`PriceResolver`) | Catalog | `akiron_catalog` |
+| Each dealer's markup percentage (the chain's values) | Identity | `akiron_identity` |
 | Search index (projection) | Catalog | Elasticsearch (disposable) |
 | Cart | Order | Redis (`cart:*`) |
 | Order aggregate (event-sourced) | Order | `akiron_order` (Marten) |

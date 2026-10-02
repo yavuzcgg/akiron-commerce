@@ -25,3 +25,4 @@ Create new ones with the `create-adr` skill.
 | [0016](0016-naming-monorepo-public-repo.md) | `Akiron.*` naming, monorepo, public repository | Accepted |
 | [0017](0017-assertion-library-licensing.md) | AwesomeAssertions for test assertions (licence) | Accepted |
 | [0018](0018-error-codes-not-translated-messages.md) | API returns error codes; clients translate | Accepted |
+| [0019](0019-own-user-store.md) | Own user table; ASP.NET Core Identity's password hasher only | Accepted |
