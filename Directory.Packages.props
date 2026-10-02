@@ -32,6 +32,15 @@
     <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="10.0.11" />
   </ItemGroup>
 
+  <ItemGroup Label="Security">
+    <!-- Only PasswordHasher<T> is used from this package; no UserManager, no Identity schema (ADR-0019). -->
+    <PackageVersion Include="Microsoft.Extensions.Identity.Core" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.11" />
+    <!-- Held at the version JwtBearer 10.0.11 itself depends on: mixing IdentityModel
+         versions inside one process is a known source of signature-validation failures. -->
+    <PackageVersion Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.19.2" />
+  </ItemGroup>
+
   <ItemGroup Label="Observability">
     <PackageVersion Include="Serilog.AspNetCore" Version="10.0.0" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.18.0" />

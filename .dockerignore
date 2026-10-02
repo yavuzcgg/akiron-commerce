@@ -13,3 +13,7 @@ labs
 **/*.md
 **/.env*
 **/appsettings.Development.json
+# Development signing keys live next to the Identity project. Baked into an image, a
+# private key ships to every registry and machine that pulls it.
+**/*.pem
+**/dev-keys/

@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The domain references nothing: no packages, no projects. See AGENTS.md. -->
+
+</Project>
