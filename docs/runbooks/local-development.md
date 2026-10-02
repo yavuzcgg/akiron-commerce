@@ -11,8 +11,9 @@ Kubernetes in the Faz 8 lab).
 # 1. Infrastructure — once per machine boot, then leave it running
 docker compose -f deploy/compose/docker-compose.infra.yml up -d --wait
 
-# 2. The service — F5 in Visual Studio 2026, or:
+# 2. The services — F5 in Visual Studio 2026 (multiple startup projects), or:
 dotnet run --project src/Services/Catalog/Akiron.Catalog.Api
+dotnet run --project src/Services/Identity/Akiron.Identity.Api
 ```
 
 `--wait` blocks until the healthchecks pass, so the command returning means the
@@ -25,6 +26,7 @@ databases are actually ready. Stopping is `down` (keeps data) or `down -v` (dele
 | Catalog API | <http://localhost:5210> | F5 opens Scalar automatically |
 | **Scalar (API explorer)** | <http://localhost:5210/scalar/v1> | Development only |
 | OpenAPI document | <http://localhost:5210/openapi/v1.json> | For Postman/Insomnia import |
+| Identity API | <http://localhost:5220/scalar/v1> | Register, login, `/users/me`, JWKS |
 | Health | `/health` (liveness) · `/health/ready` (database reachable) | Outside tracing |
 | **Jaeger** (traces) | <http://localhost:16686> | Service name `akiron-catalog` |
 | Aspire dashboard | <http://localhost:18888> | Alternate telemetry pane |
@@ -131,6 +133,20 @@ docker run --rm -p 127.0.0.1:5299:8080 --network akiron-infra_default `
 Inside the compose network the database is `akiron-postgres:5432` — 5433 is only the
 port published to your machine. Without `ASPNETCORE_ENVIRONMENT=Development` the
 container neither migrates nor seeds and serves no Scalar, exactly as in production.
+
+## Trying the login flow
+
+In Identity's Scalar: `POST /api/v1/auth/register`, then `POST /api/v1/auth/login` with
+the same email and password. Copy `accessToken`, use Scalar's **Auth → Bearer** box, and
+call `GET /api/v1/users/me`.
+
+To see what is inside a token, paste it into <https://jwt.io>; paste the key from
+<http://localhost:5220/.well-known/jwks.json> as the public key and the signature turns
+"verified". (It is a local development token — never paste a production one into a website.)
+
+The signing key is generated on first boot into
+`src/Services/Identity/Akiron.Identity.Api/dev-keys/` — git- and docker-ignored. Deleting
+it invalidates every token issued so far; the next start makes a new one.
 
 ## Common situations
 

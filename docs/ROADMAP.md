@@ -34,12 +34,20 @@ visible in Jaeger from this slice**.
 - [x] Governance layer-1 files: `Catalog/AGENTS.md`, `.claude/rules/dotnet.md` + `testing.md`, `DOMAIN_GLOSSARY.md`, `API_CONVENTIONS.md`, `runbooks/local-development.md`
 - [ ] ~~First feature plan in `docs/plans/active/`~~ — not done: slice plans lived in the session's plan mode and never reached the repo. **Fixed 2026-09-29:** the rule is now in `CLAUDE.md`, and the Faz 2 phase plan is the first file in `docs/plans/active/`.
 
-### Faz 2 — Identity + Gateway + Frontend shell (→ end of Nov 2026, 5–6 wk)
+### Faz 2 — Identity + Gateway + Frontend shell (→ end of Nov 2026, 5–6 wk) — IN PROGRESS
 
 JWT + JWKS + rotating refresh families, dealer/price-group claims, YARP, Next.js
 app shell with storefront listing, BFF-lite auth, **first gRPC call**
 (`GetDealerPermissions`) + Redis permission cache.
 **Demo:** login → storefront showing dealer-specific prices.
+
+Phase plan and owner decisions: `docs/plans/active/faz-2-identity-gateway-frontend.md`.
+
+- [x] 2.1 Identity first vertical: register, login, RS256 JWT, JWKS, `/users/me` (ADR-0019)
+- [ ] 2.2 `Akiron.ServiceDefaults` extracted from the two services
+- [ ] 2.3 Rotating refresh-token families + refresh race lab
+- [ ] 2.4 Dealers, price-group claim, Catalog validates tokens; 2.4b dealer currency + exchange rates
+- [ ] 2.5 YARP gateway · 2.6 Next.js shell · 2.7 BFF-lite auth (phase demo) · 2.8 first gRPC
 
 ### Faz 3 — Search (→ Dec 2026, 4 wk)
 

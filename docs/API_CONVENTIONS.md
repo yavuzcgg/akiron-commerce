@@ -151,6 +151,22 @@ The `catalog.text.*` and value-object codes normally never reach a client: reque
 validation rejects bad input first. They fire when something bypasses the endpoint, so
 treat them as a developer signal rather than a message to show.
 
+#### Identity
+
+Source of truth:
+[`IdentityErrorCodes`](../src/Services/Identity/Akiron.Identity.Domain/Common/IdentityErrorCodes.cs).
+`validation_failed` and `unexpected_error` are shared with Catalog, so a client handles them once.
+
+| Code | Status | Parameters |
+| --- | --- | --- |
+| `identity.auth.invalid_credentials` | 401 | — (deliberately the same for an unknown email and a wrong password) |
+| `identity.auth.unauthenticated` | 401 | — (missing, invalid or expired bearer token) |
+| `identity.user.not_found` | 404 | `userId` |
+| `identity.user.email_conflict` | 409 | — |
+| `identity.email.invalid_format` · `identity.email.too_long` | 400 | — · `maxLength` |
+| `identity.password.invalid_length` | 400 | — (8–128 characters; in `errors.password`) |
+| `identity.text.required` · `identity.text.too_long` | 400 | `field` · `maxLength` |
+
 ## Prices
 
 A price group fixes its **currency** at creation and every price inside it inherits that
